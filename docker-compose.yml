@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: smartbudget
+      POSTGRES_USER: smartbudget
+      POSTGRES_PASSWORD: smartbudget
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartbudget"]
+      interval: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/smartbudget
+      DB_USER: smartbudget
+      DB_PASSWORD: smartbudget
+      JWT_SECRET: ${JWT_SECRET:-}
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
+      SPRING_PROFILES_ACTIVE: demo
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+volumes:
+  db-data:

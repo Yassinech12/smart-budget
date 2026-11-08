@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: smart-budget
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/smartbudget}
+    username: ${DB_USER:smartbudget}
+    password: ${DB_PASSWORD:smartbudget}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+app:
+  jwt:
+    # Development key only: always set JWT_SECRET (Base64, 256 bits minimum) in production
+    secret: ${JWT_SECRET:SaQbJjn+QoIHrVj6fAG9OaAoiHcFLpAEfCaTrBBZN2cNJRy77ld+5rvXGoG8wHjg}
+    expiration-hours: ${JWT_EXPIRATION_HOURS:24}
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:3000}
+  mistral:
+    # Optional: without a key, transactions are categorized by rules only
+    api-key: ${MISTRAL_API_KEY:}
+    model: ${MISTRAL_MODEL:mistral-small-latest}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
